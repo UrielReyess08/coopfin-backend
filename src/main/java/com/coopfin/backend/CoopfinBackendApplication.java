@@ -1,0 +1,13 @@
+package com.coopfin.backend;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class CoopfinBackendApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(CoopfinBackendApplication.class, args);
+	}
+
+}
