@@ -1,3 +1,21 @@
 spring:
   application:
     name: coopfin-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/coopfin_db?currentSchema=coopfin
+    username: postgres
+    password: Clapton123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: coopfin
+
+server:
+  port: 8080
