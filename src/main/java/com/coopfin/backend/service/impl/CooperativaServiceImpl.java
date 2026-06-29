@@ -5,6 +5,8 @@ import com.coopfin.backend.dto.response.CooperativaResponse;
 import com.coopfin.backend.model.entity.Cooperativa;
 import com.coopfin.backend.repository.CooperativaRepository;
 import com.coopfin.backend.service.CooperativaService;
+import com.coopfin.backend.exception.DuplicateResourceException;
+import com.coopfin.backend.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,11 @@ public class CooperativaServiceImpl implements CooperativaService {
 
     @Override
     public CooperativaResponse crear(CooperativaRequest request) {
+
+        if (cooperativaRepository.findByRuc(request.getRuc()).isPresent()) {
+            throw new DuplicateResourceException("Ya existe una cooperativa registrada con el RUC: " + request.getRuc());
+        }
+
         Cooperativa cooperativa = Cooperativa.builder()
                 .nombre(request.getNombre())
                 .ruc(request.getRuc())
@@ -44,7 +51,7 @@ public class CooperativaServiceImpl implements CooperativaService {
     @Override
     public CooperativaResponse obtenerPorId(Long id) {
         Cooperativa cooperativa = cooperativaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cooperativa no encontrada con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Cooperativa no encontrada con id: " + id));
 
         return convertirAResponse(cooperativa);
     }
@@ -52,7 +59,7 @@ public class CooperativaServiceImpl implements CooperativaService {
     @Override
     public CooperativaResponse actualizar(Long id, CooperativaRequest request) {
         Cooperativa cooperativa = cooperativaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cooperativa no encontrada con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Cooperativa no encontrada con id: " + id));
 
         cooperativa.setNombre(request.getNombre());
         cooperativa.setRuc(request.getRuc());

@@ -2,9 +2,12 @@ package com.coopfin.backend.service.impl;
 
 import com.coopfin.backend.dto.request.RolRequest;
 import com.coopfin.backend.dto.response.RolResponse;
+import com.coopfin.backend.exception.ResourceNotFoundException;
 import com.coopfin.backend.model.entity.Rol;
 import com.coopfin.backend.repository.RolRepository;
 import com.coopfin.backend.service.RolService;
+import com.coopfin.backend.exception.ResourceNotFoundException;
+import com.coopfin.backend.exception.DuplicateResourceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,14 +32,14 @@ public class RolServiceImpl implements RolService {
     @Override
     public RolResponse obtenerRolPorId(Long id) {
         Rol rol = rolRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado con id: " + id));
         return convertirAResponse(rol);
     }
 
     @Override
     public RolResponse actualizarRol(Long id, RolRequest request) {
         Rol rol = rolRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado con id: " + id));
 
         rol.setNombre(request.getNombre());
         rol.setDescripcion(request.getDescripcion());
@@ -55,7 +58,7 @@ public class RolServiceImpl implements RolService {
     @Override
     public void eliminarRol(Long id) {
         Rol rol = rolRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado con id: " + id));
         rolRepository.delete(rol);
     }
 

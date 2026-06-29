@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface CooperativaRepository extends JpaRepository<Cooperativa, Long> {
 
-    Optional<Cooperativa> findById(long id);
+    Optional<Cooperativa> findByRuc(String ruc);
 }

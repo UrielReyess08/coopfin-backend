@@ -1,36 +1,55 @@
 package com.coopfin.backend.dto.request;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Data
 public class CooperativaRequest {
 
-    @NotBlank
-    @Size(max = 150)
+    @NotBlank(message = "el nombre es obligatorio")
+    @Size(
+            max = 150,
+            message = "El nombre no puede superar los 150 caracteres"
+    )
     private String nombre;
 
-    @NotBlank
-    @Size(min = 11, max = 11)
+    @NotBlank(message = "el RUC es obligatorio")
+    @Pattern(regexp = "\\d{11}", message = "el RUC debe contener exactamente 11 dígitos")
     private String ruc;
 
-    @Size(max = 255)
+    @Size(
+            max = 255,
+            message = "La dirección no puede superar los 255 caracteres"
+    )
     private String direccion;
 
-    @Size(max = 20)
+    @NotBlank(message = "el teléfono es obligatorio")
+    @Pattern(regexp = "\\d{9}", message = "El teléfono debe tener 9 dígitos")
     private String telefono;
 
-    @Email
-    @Size(max = 120)
+    @NotBlank(message = "el correo es obligatorio")
+    @Email(message = "Debe ingresar un correo válido")
+    @Size(
+            max = 120,
+            message = "El correo no puede superar los 120 caracteres"
+    )
     private String email;
 
+    @Size(
+            max = 500,
+            message = "La URL del logo es demasiado larga"
+    )
     private String logoUrl;
 
-    @Size(max = 20)
+    @Pattern(
+            regexp = "^#([A-Fa-f0-9]{6})$",
+            message = "Color hexadecimal inválido"
+    )
     private String colorPrincipal;
 
-    @Size(max = 20)
+    @Pattern(
+            regexp = "^#([A-Fa-f0-9]{6})$",
+            message = "Color hexadecimal inválido"
+    )
     private String colorSecundario;
 }
