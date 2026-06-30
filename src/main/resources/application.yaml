@@ -19,3 +19,7 @@ spring:
 
 server:
   port: 8080
+
+jwt:
+    secret: "coopfin_secret_key_super_segura_2026_para_firmar_tokens"
+    expiration: 86400000
