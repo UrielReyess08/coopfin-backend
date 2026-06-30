@@ -9,6 +9,7 @@ import com.coopfin.backend.exception.DuplicateResourceException;
 import com.coopfin.backend.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class CooperativaServiceImpl implements CooperativaService {
 
     private  final CooperativaRepository cooperativaRepository;
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public CooperativaResponse crear(CooperativaRequest request) {
 
@@ -40,6 +42,7 @@ public class CooperativaServiceImpl implements CooperativaService {
         return convertirAResponse(cooperativaRepository.save(cooperativa));
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','OPERADOR')")
     @Override
     public List<CooperativaResponse> listar() {
         return cooperativaRepository.findAll()
@@ -48,6 +51,7 @@ public class CooperativaServiceImpl implements CooperativaService {
                 .toList();
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','OPERADOR')")
     @Override
     public CooperativaResponse obtenerPorId(Long id) {
         Cooperativa cooperativa = cooperativaRepository.findById(id)
@@ -56,6 +60,7 @@ public class CooperativaServiceImpl implements CooperativaService {
         return convertirAResponse(cooperativa);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public CooperativaResponse actualizar(Long id, CooperativaRequest request) {
         Cooperativa cooperativa = cooperativaRepository.findById(id)
@@ -73,10 +78,11 @@ public class CooperativaServiceImpl implements CooperativaService {
         return convertirAResponse(cooperativaRepository.save(cooperativa));
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public void eliminar(Long id) {
         Cooperativa cooperativa = cooperativaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cooperativa no encontrada con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Cooperativa no encontrada con id: " + id));
 
         cooperativaRepository.delete(cooperativa);
     }
