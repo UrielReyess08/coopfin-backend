@@ -14,6 +14,7 @@ import com.coopfin.backend.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final CooperativaRepository cooperativaRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public UsuarioResponse crear(UsuarioRequest request) {
         if (usuarioRepository.findByUsername(request.getUsername()).isPresent()) {
@@ -53,6 +55,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         return convertirAResponse(usuarioRepository.save(usuario));
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public List<UsuarioResponse> listar() {
         return usuarioRepository.findAll()
@@ -61,6 +64,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .toList();
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public UsuarioResponse obtenerPorId(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
@@ -69,6 +73,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         return convertirAResponse(usuario);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public UsuarioResponse actualizar(Long id, UsuarioRequest request) {
         Usuario usuario = usuarioRepository.findById(id)
@@ -89,6 +94,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         return convertirAResponse(usuarioRepository.save(usuario));
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public void eliminar(Long id) {
         Usuario usuario = usuarioRepository.findById(id)

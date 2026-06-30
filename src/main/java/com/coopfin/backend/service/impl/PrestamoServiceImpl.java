@@ -17,6 +17,7 @@ import com.coopfin.backend.repository.CuotaPrestamoRepository;
 import java.math.RoundingMode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -31,6 +32,7 @@ public class PrestamoServiceImpl implements PrestamoService {
     private final ConfiguracionCooperativaRepository configuracionRepository;
     private final CuotaPrestamoRepository cuotaPrestamoRepository;
 
+    @PreAuthorize("hasRole('SOCIO')")
     @Override
     public PrestamoResponse solicitar(PrestamoSolicitudRequest request) {
         Socio socio = socioRepository.findById(request.getIdSocio())
@@ -66,6 +68,7 @@ public class PrestamoServiceImpl implements PrestamoService {
         return convertirAResponse(prestamoRepository.save(prestamo));
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public PrestamoResponse aprobar(Long idPrestamo) {
         Prestamo prestamo = prestamoRepository.findById(idPrestamo)
@@ -91,6 +94,7 @@ public class PrestamoServiceImpl implements PrestamoService {
         return convertirAResponse(prestamoRepository.save(prestamo));
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','OPERADOR')")
     @Override
     public List<PrestamoResponse> listar() {
         return prestamoRepository.findAll()
@@ -99,6 +103,7 @@ public class PrestamoServiceImpl implements PrestamoService {
                 .toList();
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','OPERADOR')")
     @Override
     public PrestamoResponse obtenerPorId(Long id) {
         Prestamo prestamo = prestamoRepository.findById(id)
@@ -107,6 +112,7 @@ public class PrestamoServiceImpl implements PrestamoService {
         return convertirAResponse(prestamo);
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','OPERADOR')")
     @Override
     public List<PrestamoResponse> listarPorSocio(Long idSocio) {
         return prestamoRepository.findBySocioIdSocio(idSocio)

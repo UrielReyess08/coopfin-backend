@@ -13,6 +13,7 @@ import com.coopfin.backend.repository.UsuarioRepository;
 import com.coopfin.backend.service.SocioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class SocioServiceImpl implements SocioService {
     private final CooperativaRepository cooperativaRepository;
     private final UsuarioRepository usuarioRepository;
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','OPERADOR')")
     @Override
     public SocioResponse crear(SocioRequest request) {
         Cooperativa cooperativa = cooperativaRepository.findById(request.getIdCooperativa())
@@ -57,6 +59,7 @@ public class SocioServiceImpl implements SocioService {
         return convertirAResponse(socioRepository.save(socio));
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','OPERADOR')")
     @Override
     public List<SocioResponse> listar() {
         return socioRepository.findAll()
@@ -65,6 +68,7 @@ public class SocioServiceImpl implements SocioService {
                 .toList();
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','OPERADOR')")
     @Override
     public SocioResponse obtenerPorId(Long id) {
         Socio socio = socioRepository.findById(id)
@@ -73,6 +77,7 @@ public class SocioServiceImpl implements SocioService {
         return convertirAResponse(socio);
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','OPERADOR')")
     @Override
     public SocioResponse actualizar(Long id, SocioRequest request) {
         Socio socio = socioRepository.findById(id)
@@ -99,6 +104,7 @@ public class SocioServiceImpl implements SocioService {
         return convertirAResponse(socioRepository.save(socio));
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','OPERADOR')")
     @Override
     public void eliminar(Long id) {
         Socio socio = socioRepository.findById(id)

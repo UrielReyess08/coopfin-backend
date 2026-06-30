@@ -15,6 +15,7 @@ import com.coopfin.backend.repository.PrestamoRepository;
 import com.coopfin.backend.service.PagoCuotaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -27,6 +28,7 @@ public class PagoCuotaServiceImpl implements PagoCuotaService {
     private final CuotaPrestamoRepository cuotaPrestamoRepository;
     private final PrestamoRepository prestamoRepository;
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','OPERADOR','SOCIO')")
     @Override
     public PagoCuotaResponse registrarPago(PagoCuotaRequest request) {
         CuotaPrestamo cuota = cuotaPrestamoRepository.findById(request.getIdCuota())
@@ -89,6 +91,7 @@ public class PagoCuotaServiceImpl implements PagoCuotaService {
         return convertirAResponse(pagoGuardado);
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','OPERADOR')")
     @Override
     public List<PagoCuotaResponse> listar() {
         return pagoCuotaRepository.findAll()
@@ -97,6 +100,7 @@ public class PagoCuotaServiceImpl implements PagoCuotaService {
                 .toList();
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','OPERADOR')")
     @Override
     public List<PagoCuotaResponse> listarPorCuota(Long idCuota) {
         return pagoCuotaRepository.findByCuotaIdCuota(idCuota)

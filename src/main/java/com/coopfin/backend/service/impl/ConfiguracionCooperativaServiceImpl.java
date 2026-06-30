@@ -11,6 +11,7 @@ import com.coopfin.backend.repository.CooperativaRepository;
 import com.coopfin.backend.service.ConfiguracionCooperativaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class ConfiguracionCooperativaServiceImpl implements ConfiguracionCoopera
     private final ConfiguracionCooperativaRepository configuracionRepository;
     private final CooperativaRepository cooperativaRepository;
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public ConfiguracionCooperativaResponse crear(ConfiguracionCooperativaRequest request) {
         Cooperativa cooperativa = cooperativaRepository.findById(request.getIdCooperativa())
@@ -43,6 +45,7 @@ public class ConfiguracionCooperativaServiceImpl implements ConfiguracionCoopera
         return convertirAResponse(configuracionRepository.save(configuracion));
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','OPERADOR')")
     @Override
     public List<ConfiguracionCooperativaResponse> listar() {
         return configuracionRepository.findAll()
@@ -51,6 +54,7 @@ public class ConfiguracionCooperativaServiceImpl implements ConfiguracionCoopera
                 .toList();
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','OPERADOR')")
     @Override
     public ConfiguracionCooperativaResponse obtenerPorId(Long id) {
         ConfiguracionCooperativa configuracion = configuracionRepository.findById(id)
@@ -59,6 +63,7 @@ public class ConfiguracionCooperativaServiceImpl implements ConfiguracionCoopera
         return convertirAResponse(configuracion);
     }
 
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','OPERADOR')")
     @Override
     public ConfiguracionCooperativaResponse obtenerPorCooperativa(Long idCooperativa) {
         ConfiguracionCooperativa configuracion = configuracionRepository.findByCooperativaIdCooperativa(idCooperativa)
@@ -67,6 +72,7 @@ public class ConfiguracionCooperativaServiceImpl implements ConfiguracionCoopera
         return convertirAResponse(configuracion);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public ConfiguracionCooperativaResponse actualizar(Long id, ConfiguracionCooperativaRequest request) {
         ConfiguracionCooperativa configuracion = configuracionRepository.findById(id)
@@ -85,6 +91,7 @@ public class ConfiguracionCooperativaServiceImpl implements ConfiguracionCoopera
         return convertirAResponse(configuracionRepository.save(configuracion));
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @Override
     public void eliminar(Long id) {
         ConfiguracionCooperativa configuracion = configuracionRepository.findById(id)
