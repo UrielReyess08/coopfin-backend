@@ -40,6 +40,9 @@ public class ConfiguracionCooperativaServiceImpl implements ConfiguracionCoopera
                 .diasGracia(request.getDiasGracia())
                 .estado(true)
                 .cooperativa(cooperativa)
+                .montoMinimoAportacion(request.getMontoMinimoAportacion())
+                .montoMaximoAportacion(request.getMontoMaximoAportacion())
+                .diaPagoAportacion(request.getDiaPagoAportacion())
                 .build();
 
         return convertirAResponse(configuracionRepository.save(configuracion));
@@ -87,6 +90,9 @@ public class ConfiguracionCooperativaServiceImpl implements ConfiguracionCoopera
         configuracion.setNumeroMaximoCuotas(request.getNumeroMaximoCuotas());
         configuracion.setDiasGracia(request.getDiasGracia());
         configuracion.setCooperativa(cooperativa);
+        configuracion.setMontoMinimoAportacion(request.getMontoMinimoAportacion());
+        configuracion.setMontoMaximoAportacion(request.getMontoMaximoAportacion());
+        configuracion.setDiaPagoAportacion(request.getDiaPagoAportacion());
 
         return convertirAResponse(configuracionRepository.save(configuracion));
     }
@@ -111,6 +117,9 @@ public class ConfiguracionCooperativaServiceImpl implements ConfiguracionCoopera
                 .estado(configuracion.getEstado())
                 .idCooperativa(configuracion.getCooperativa().getIdCooperativa())
                 .nombreCooperativa(configuracion.getCooperativa().getNombre())
+                .montoMinimoAportacion(configuracion.getMontoMinimoAportacion())
+                .montoMaximoAportacion(configuracion.getMontoMaximoAportacion())
+                .diaPagoAportacion(configuracion.getDiaPagoAportacion())
                 .build();
     }
 }

@@ -18,4 +18,7 @@ public class ConfiguracionCooperativaResponse {
     private Boolean estado;
     private Long idCooperativa;
     private String nombreCooperativa;
+    private BigDecimal montoMinimoAportacion;
+    private BigDecimal montoMaximoAportacion;
+    private Integer diaPagoAportacion;
 }

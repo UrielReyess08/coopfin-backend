@@ -40,4 +40,13 @@ public class ConfiguracionCooperativa {
     @OneToOne
     @JoinColumn(name = "id_cooperativa", nullable = false, unique = true)
     private Cooperativa cooperativa;
+
+    @Column(name = "monto_minimo_aportacion", precision = 12, scale = 2)
+    private BigDecimal montoMinimoAportacion;
+
+    @Column(name = "monto_maximo_aportacion", precision = 12, scale = 2)
+    private BigDecimal montoMaximoAportacion;
+
+    @Column(name = "dia_pago_aportacion")
+    private Integer diaPagoAportacion;
 }

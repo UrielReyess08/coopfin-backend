@@ -30,4 +30,17 @@ public class ConfiguracionCooperativaRequest {
 
     @NotNull(message = "La cooperativa es obligatoria")
     private Long idCooperativa;
+
+    @NotNull(message = "El monto mínimo de aportación es obligatorio")
+    @DecimalMin(value = "0.01", message = "El monto mínimo de aportación debe ser mayor a 0")
+    private BigDecimal montoMinimoAportacion;
+
+    @NotNull(message = "El monto máximo de aportación es obligatorio")
+    @DecimalMin(value = "0.01", message = "El monto máximo de aportación debe ser mayor a 0")
+    private BigDecimal montoMaximoAportacion;
+
+    @NotNull(message = "El día de pago de aportación es obligatorio")
+    @Min(value = 1, message = "El día de pago debe ser entre 1 y 28")
+    @Max(value = 28, message = "El día de pago debe ser entre 1 y 28")
+    private Integer diaPagoAportacion;
 }
