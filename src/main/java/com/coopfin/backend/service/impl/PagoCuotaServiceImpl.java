@@ -2,6 +2,7 @@ package com.coopfin.backend.service.impl;
 
 import com.coopfin.backend.dto.request.PagoCuotaRequest;
 import com.coopfin.backend.dto.response.PagoCuotaResponse;
+import com.coopfin.backend.exception.BadRequestException;
 import com.coopfin.backend.exception.ResourceNotFoundException;
 import com.coopfin.backend.model.entity.CuotaPrestamo;
 import com.coopfin.backend.model.entity.PagoCuota;
@@ -33,15 +34,28 @@ public class PagoCuotaServiceImpl implements PagoCuotaService {
 
         Prestamo prestamo = cuota.getPrestamo();
 
+        boolean existenCuotasPendientesAnteriores =
+                cuotaPrestamoRepository.existsByPrestamoIdPrestamoAndNumeroCuotaLessThanAndEstado(
+                        prestamo.getIdPrestamo(),
+                        cuota.getNumeroCuota(),
+                        EstadoCuota.PENDIENTE
+                );
+
+        if (existenCuotasPendientesAnteriores) {
+            throw new BadRequestException("No puede pagar esta cuota porque existen cuotas anteriores pendientes");
+        }
+
         if (cuota.getEstado() == EstadoCuota.PAGADA) {
-            throw new RuntimeException("La cuota ya se encuentra pagada");
+            throw new BadRequestException("La cuota ya se encuentra pagada");
         }
 
         BigDecimal montoTotalPagado = request.getCapitalPagado()
                 .add(request.getInteresPagado())
                 .add(request.getMoraPagada());
 
-        
+        if (montoTotalPagado.compareTo(cuota.getMontoTotal()) != 0) {
+            throw new RuntimeException("El monto pagado no coincide con el monto total de la cuota");
+        }
 
         PagoCuota pago = PagoCuota.builder()
                 .capitalPagado(request.getCapitalPagado())
