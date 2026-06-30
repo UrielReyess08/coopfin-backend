@@ -11,6 +11,10 @@ import com.coopfin.backend.repository.ConfiguracionCooperativaRepository;
 import com.coopfin.backend.repository.PrestamoRepository;
 import com.coopfin.backend.repository.SocioRepository;
 import com.coopfin.backend.service.PrestamoService;
+import com.coopfin.backend.model.entity.CuotaPrestamo;
+import com.coopfin.backend.model.enums.EstadoCuota;
+import com.coopfin.backend.repository.CuotaPrestamoRepository;
+import java.math.RoundingMode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +29,7 @@ public class PrestamoServiceImpl implements PrestamoService {
     private final PrestamoRepository prestamoRepository;
     private final SocioRepository socioRepository;
     private final ConfiguracionCooperativaRepository configuracionRepository;
+    private final CuotaPrestamoRepository cuotaPrestamoRepository;
 
     @Override
     public PrestamoResponse solicitar(PrestamoSolicitudRequest request) {
@@ -71,13 +76,17 @@ public class PrestamoServiceImpl implements PrestamoService {
 
         BigDecimal interes = prestamo.getMontoSolicitado()
                 .multiply(prestamo.getTasaInteresAplicada())
-                .divide(BigDecimal.valueOf(100));
+                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
 
         BigDecimal total = prestamo.getMontoSolicitado().add(interes);
 
         prestamo.setSaldoCapital(prestamo.getMontoSolicitado());
         prestamo.setSaldoInteres(interes);
         prestamo.setSaldoTotal(total);
+
+        prestamo = prestamoRepository.save(prestamo);
+
+        generarCuotas(prestamo);
 
         return convertirAResponse(prestamoRepository.save(prestamo));
     }
@@ -130,5 +139,27 @@ public class PrestamoServiceImpl implements PrestamoService {
                 .idSocio(prestamo.getSocio().getIdSocio())
                 .nombreSocio(prestamo.getSocio().getNombres() + " " + prestamo.getSocio().getApellidos())
                 .build();
+    }
+
+    private void generarCuotas(Prestamo prestamo) {
+        BigDecimal capitalPorCuota = prestamo.getSaldoCapital()
+                .divide(BigDecimal.valueOf(prestamo.getNumeroCuotas()), 2, RoundingMode.HALF_UP);
+
+        BigDecimal interesPorCuota = prestamo.getSaldoInteres()
+                .divide(BigDecimal.valueOf(prestamo.getNumeroCuotas()), 2, RoundingMode.HALF_UP);
+
+        for (int i = 1; i <= prestamo.getNumeroCuotas(); i++) {
+            CuotaPrestamo cuota = CuotaPrestamo.builder()
+                    .numeroCuota(i)
+                    .capitalProgramado(capitalPorCuota)
+                    .interesProgramado(interesPorCuota)
+                    .montoTotal(capitalPorCuota.add(interesPorCuota))
+                    .fechaVencimiento(prestamo.getFechaAprobacion().plusMonths(i))
+                    .estado(EstadoCuota.PENDIENTE)
+                    .prestamo(prestamo)
+                    .build();
+
+            cuotaPrestamoRepository.save(cuota);
+        }
     }
 }
